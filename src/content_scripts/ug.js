@@ -60,9 +60,9 @@ chrome.storage.sync.get(['access_token'], function(items) {
 
 function showLoginButton() {
   $("body").append(`
-    <button onclick="authorizeSpotify()" style="position: fixed; right: 10px; bottom: 10px;">
+    <img src="https://raw.githubusercontent.com/madya121/ug-spotify-connector/master/icons/icon256.png" onclick="authorizeSpotify()" style="position: fixed; right: 15px; bottom: 15px;">
       Login To Spotify
-    </button>
+    </img>
 
     <script>
       function authorizeSpotify() {
@@ -74,9 +74,9 @@ function showLoginButton() {
 
 function showGoToTabButton(token) {
   $("body").append(`
-    <button onclick="imFeelingLucky()" style="position: fixed; right: 10px; bottom: 10px;">
+    <img src="https://raw.githubusercontent.com/madya121/ug-spotify-connector/master/icons/icon128.png" onclick="imFeelingLucky()" style="position: fixed; right: 15px; bottom: 15px; width: 75px;">
       Go To Tab
-    </button>
+    </img>
   `);
 
   $("body").append(`
