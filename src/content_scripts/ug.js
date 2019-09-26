@@ -5,7 +5,7 @@ auth_params.append("client_id", "fbbf2fd601d3499d8843bed68bed8b49");
 auth_params.append("response_type", "code");
 auth_params.append("redirect_uri", "https://www.ultimate-guitar.com/");
 auth_params.append("scope", "user-read-currently-playing");
-auth_params.append("show_dialog", "false");
+auth_params.append("show_dialog", "true");
 
 const AuthUrl = auth_url.toString() + "?" + auth_params.toString();
 
