@@ -58,9 +58,25 @@ chrome.storage.local.get(['access_token'], function(items) {
 
 //*****************************************************************
 
+$("body").append(`
+  <style>
+    .ug-spotify {
+      position: fixed;
+      right: 15px;
+      bottom: 15px;
+      width: 75px;
+      cursor: pointer;
+    }
+
+    .ug-spotify:hover {
+      bottom: 17px;
+    }
+  </style>
+`);
+
 function showLoginButton() {
   $("body").append(`
-    <img src="https://raw.githubusercontent.com/madya121/ug-spotify-connector/master/icons/spotify128.png" onclick="authorizeSpotify()" style="position: fixed; right: 15px; bottom: 15px; width: 75px;" />
+    <img src="https://raw.githubusercontent.com/madya121/ug-spotify-connector/master/icons/spotify128.png" onclick="authorizeSpotify()" class="ug-spotify" />
 
     <script>
       function authorizeSpotify() {
@@ -72,7 +88,7 @@ function showLoginButton() {
 
 function showGoToTabButton(token) {
   $("body").append(`
-    <img src="https://raw.githubusercontent.com/madya121/ug-spotify-connector/master/icons/icon128.png" onclick="imFeelingLucky()" style="position: fixed; right: 15px; bottom: 15px; width: 75px;" />
+    <img src="https://raw.githubusercontent.com/madya121/ug-spotify-connector/master/icons/icon128.png" onclick="imFeelingLucky()" class="ug-spotify" />
   `);
 
   $("body").append(`
