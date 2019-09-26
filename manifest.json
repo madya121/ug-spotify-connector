@@ -15,13 +15,17 @@
     ],
     "persistent": false
   },
-  "options_page": "src/options/index.html",
-  "page_action": {
-    "default_icon": "icons/icon128.png",
-    "default_title": "page action demo",
-    "default_popup": "src/page_action/page_action.html"
-  },
+  "content_scripts": [
+   {
+     "matches": ["https://*.ultimate-guitar.com/*"],
+     "js": [
+       "src/content_scripts/jquery.js",
+       "src/content_scripts/ug.js"
+     ]
+   }
+ ],
   "permissions": [
-    "https://www.ultimate-guitar.com/*"
+    "storage",
+    "https://*.ultimate-guitar.com/*"
   ]
 }
