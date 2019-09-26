@@ -14,7 +14,7 @@ const code        = url_params.get("code");
 const reset_token = url_params.get("reset_token");
 
 if (reset_token === "true") {
-  chrome.storage.sync.remove(["access_token"], function() {
+  chrome.storage.local.remove(["access_token"], function() {
     $("body").append(`
       <script>
         window.open("https://ultimate-guitar.com", "_self");
@@ -34,7 +34,7 @@ if (code) {
       const obj = JSON.parse(resp);
       console.log(obj);
 
-      chrome.storage.sync.set({access_token: obj.access_token}, function() {
+      chrome.storage.local.set({access_token: obj.access_token}, function() {
         $("body").append(`
           <script>
             window.open("https://ultimate-guitar.com", "_self");
@@ -46,7 +46,7 @@ if (code) {
 }
 
 // Read it using the storage API
-chrome.storage.sync.get(['access_token'], function(items) {
+chrome.storage.local.get(['access_token'], function(items) {
   const token = items['access_token'];
 
   if (token) {
@@ -60,9 +60,7 @@ chrome.storage.sync.get(['access_token'], function(items) {
 
 function showLoginButton() {
   $("body").append(`
-    <img src="https://raw.githubusercontent.com/madya121/ug-spotify-connector/master/icons/icon256.png" onclick="authorizeSpotify()" style="position: fixed; right: 15px; bottom: 15px;">
-      Login To Spotify
-    </img>
+    <img src="https://raw.githubusercontent.com/madya121/ug-spotify-connector/master/icons/spotify128.png" onclick="authorizeSpotify()" style="position: fixed; right: 15px; bottom: 15px; width: 75px;" />
 
     <script>
       function authorizeSpotify() {
@@ -74,9 +72,7 @@ function showLoginButton() {
 
 function showGoToTabButton(token) {
   $("body").append(`
-    <img src="https://raw.githubusercontent.com/madya121/ug-spotify-connector/master/icons/icon128.png" onclick="imFeelingLucky()" style="position: fixed; right: 15px; bottom: 15px; width: 75px;">
-      Go To Tab
-    </img>
+    <img src="https://raw.githubusercontent.com/madya121/ug-spotify-connector/master/icons/icon128.png" onclick="imFeelingLucky()" style="position: fixed; right: 15px; bottom: 15px; width: 75px;" />
   `);
 
   $("body").append(`
