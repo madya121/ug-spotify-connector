@@ -46,11 +46,13 @@ if (code) {
 }
 
 // Read it using the storage API
-chrome.storage.local.get(['access_token'], function(items) {
-  const token = items['access_token'];
+chrome.storage.local.get(['access_token', 'type', 'official'], function(items) {
+  const token    = items['access_token'];
+  const type     = items['type'] || 'any';
+  const official = items['official'] || false;
 
   if (token) {
-    showGoToTabButton(token);
+    showGoToTabButton(token, official, type);
   } else {
     showLoginButton();
   }
@@ -86,7 +88,7 @@ function showLoginButton() {
   `);
 }
 
-function showGoToTabButton(token) {
+function showGoToTabButton(token, official, type) {
   $("body").append(`
     <img src="https://raw.githubusercontent.com/madya121/ug-spotify-connector/master/icons/icon128.png" onclick="imFeelingLucky()" class="ug-spotify" />
   `);
@@ -95,7 +97,17 @@ function showGoToTabButton(token) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
     <script>
+      var official  = ${official};
+      var type      = "${type}";
       var urlParams = new URLSearchParams(window.location.search);
+
+      var typeMap   = {
+        'chords': 300,
+        'tab': 200,
+        'ukulele': 800,
+        'bass': 400,
+        'any': 0,
+      };
 
       if (urlParams.get("from") === "ug_spotify_plugin") {
         var generatedSource = new XMLSerializer().serializeToString(document);
@@ -108,9 +120,25 @@ function showGoToTabButton(token) {
             var objStr = trimmed.substring("window.UGAPP.store.page = ".length, trimmed.length - 1);
             var obj    = JSON.parse(objStr);
             var data   = obj.data;
-            var lucky  = data.results[0].tab_url;
+            var lucky  = null;
 
-            window.open(lucky, "_self");
+            var found = false;
+            for (var i = 0; i < data.results.length; i++) {
+              if (official === false && data.results[i].marketing_type === 'official')
+                continue;
+
+              var dType = data.results[i].marketing_type || data.results[i].type;
+
+              if (type !== 'any' && dType.toLowerCase() !== type)
+                continue;
+
+              found = true;
+              lucky = data.results[i].tab_url;
+              break;
+            }
+
+            if (found)
+              window.open(lucky, "_self");
           }
         })
       }
@@ -131,7 +159,7 @@ function showGoToTabButton(token) {
 
             // scrapUGSearch(songName + " " + artist);
             window.open("https://www.ultimate-guitar.com/search.php?from=ug_spotify_plugin&search_type=title&value=" +
-              encodeURIComponent(songName + " " + artist),
+              encodeURIComponent(songName + " " + artist) + "&type=" + typeMap[type],
               "_self"
             );
           },

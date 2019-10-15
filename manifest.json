@@ -24,6 +24,7 @@
      ]
    }
  ],
+  "options_page": "src/options/index.html",
   "permissions": [
     "storage",
     "https://*.ultimate-guitar.com/*"
