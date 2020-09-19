@@ -94,8 +94,6 @@ function showGoToTabButton(token, official, type) {
   `);
 
   $("body").append(`
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-
     <script>
       var official  = ${official};
       var type      = "${type}";
@@ -108,32 +106,43 @@ function showGoToTabButton(token, official, type) {
         'bass': 400,
         'any': 0,
       };
-
-      if (urlParams.get("from") === "ug_spotify_plugin") {
-        var generatedSource = new XMLSerializer().serializeToString(document);
-
-        var arrays = generatedSource.split("\\n");
+      
+      if (window.location.hostname !== "tabs.ultimate-guitar.com") {
+        console.log("Kontol");
+        loadScript("https://code.jquery.com/jquery-3.5.1.js", () => {
+          $.get(window.location.href, function(data, status){
+            processData(data);
+          });
+        })
+      }
+      
+      function processData(data) {
+        var arrays = data.split("\\n");
         arrays.forEach((s) => {
           const trimmed = s.trim();
-
-          if (trimmed.startsWith("window.UGAPP.store.page")) {
-            var objStr = trimmed.substring("window.UGAPP.store.page = ".length, trimmed.length - 1);
-            var obj    = JSON.parse(objStr);
-            var data   = obj.data;
-            var lucky  = null;
-
-            var found = false;
-            for (var i = 0; i < data.results.length; i++) {
-              if (official === false && data.results[i].marketing_type === 'official')
+          
+          if (trimmed.startsWith('<div class="js-store" data-content="')) {
+            var objStr  = trimmed.substring('<div class="js-store" data-content="'.length, trimmed.length - 8).replace(/&quot;/g, '"');
+            var obj     = JSON.parse(objStr);
+            
+            if (!obj || !obj.store || !obj.store.page || !obj.store.page.data || !obj.store.page.data.results)
+              return;
+            
+            var results = obj.store.page.data.results;
+            var lucky   = null;
+            console.log(results);
+            
+            for (var i = 0; i < results.length; i++) {
+              if (official === false && results[i].marketing_type === 'official')
                 continue;
 
-              var dType = data.results[i].marketing_type || data.results[i].type;
+              var dType = results[i].marketing_type || results[i].type;
 
               if (type !== 'any' && dType.toLowerCase() !== type)
                 continue;
 
               found = true;
-              lucky = data.results[i].tab_url;
+              lucky = results[i].tab_url;
               break;
             }
 
@@ -143,30 +152,61 @@ function showGoToTabButton(token, official, type) {
         })
       }
 
+      // if (urlParams.get("from") === "ug_spotify_plugin") {
+      // var generatedSource = new XMLSerializer().serializeToString(document);
+      
+      // }
+
       function imFeelingLucky() {
-        $.ajax({
-          url: "https://api.spotify.com/v1/me/player/currently-playing",
-          beforeSend: function(xhr) {
-            xhr.setRequestHeader('Accept', 'application/json');
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('Authorization', 'Bearer ${token}');
-          },
-          success: function(resp) {
-            var songInfo = resp.item;
+        loadScript("https://code.jquery.com/jquery-3.5.1.js", () => {
+            
+            $.ajax({
+              url: "https://api.spotify.com/v1/me/player/currently-playing",
+              beforeSend: function(xhr) {
+                xhr.setRequestHeader('Accept', 'application/json');
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.setRequestHeader('Authorization', 'Bearer ${token}');
+              },
+              success: function(resp) {
+                var songInfo = resp.item;
 
-            var songName = songInfo.name;
-            var artist   = songInfo.artists[0].name;
+                var songName = songInfo.name;
+                var artist   = songInfo.artists[0].name;
 
-            // scrapUGSearch(songName + " " + artist);
-            window.open("https://www.ultimate-guitar.com/search.php?from=ug_spotify_plugin&search_type=title&value=" +
-              encodeURIComponent(songName + " " + artist) + "&type=" + typeMap[type],
-              "_self"
-            );
-          },
-          error: function() {
-            window.open("https://ultimate-guitar.com?reset_token=true", "_self");
-          }
+                // scrapUGSearch(songName + " " + artist);
+                window.open("https://www.ultimate-guitar.com/search.php?from=ug_spotify_plugin&search_type=title&value=" +
+                  encodeURIComponent(songName + " " + artist) + "&type=" + typeMap[type],
+                  "_self"
+                );
+              },
+              error: function() {
+                window.open("https://ultimate-guitar.com?reset_token=true", "_self");
+              }
+            });
+            
         });
+      }
+      
+      function loadScript(url, callback){
+
+        var script = document.createElement("script")
+        script.type = "text/javascript";
+
+        if (script.readyState){  //IE
+          script.onreadystatechange = function(){
+              if (script.readyState == "loaded" || script.readyState == "complete"){
+                script.onreadystatechange = null;
+                callback();
+              }
+          };
+        } else {  //Others
+          script.onload = function(){
+            callback();
+          };
+        }
+
+        script.src = url;
+        document.getElementsByTagName("head")[0].appendChild(script);
       }
 
     </script>
