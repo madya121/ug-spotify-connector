@@ -1,6 +1,6 @@
 {
   "name": "UG Companion",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "manifest_version": 2,
   "description": "Tab finder based on your current Spotify track.",
   "homepage_url": "https://github.com/madya121/ug-spotify-connector",
