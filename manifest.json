@@ -1,5 +1,5 @@
 {
-  "name": "Ultimate Guitar - Spotify Connector",
+  "name": "UG Companion",
   "version": "0.0.1",
   "manifest_version": 2,
   "description": "Tab finder based on your current Spotify track.",
